@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, cats, Cat, InsertCat, weightRecords, WeightRecord, InsertWeightRecord, mealRecords, MealRecord, InsertMealRecord, excretionRecords, ExcretionRecord, InsertExcretionRecord, healthRecords, HealthRecord, InsertHealthRecord } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,68 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+// Cat management queries
+export async function getCatsByUserId(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(cats).where(eq(cats.userId, userId));
+}
+
+export async function createCat(data: InsertCat) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(cats).values(data);
+  return result;
+}
+
+// Weight records queries
+export async function getWeightRecordsByCat(catId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(weightRecords).where(eq(weightRecords.catId, catId));
+}
+
+export async function addWeightRecord(data: InsertWeightRecord) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.insert(weightRecords).values(data);
+}
+
+// Meal records queries
+export async function getMealRecordsByCat(catId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(mealRecords).where(eq(mealRecords.catId, catId));
+}
+
+export async function addMealRecord(data: InsertMealRecord) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.insert(mealRecords).values(data);
+}
+
+// Excretion records queries
+export async function getExcretionRecordsByCat(catId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(excretionRecords).where(eq(excretionRecords.catId, catId));
+}
+
+export async function addExcretionRecord(data: InsertExcretionRecord) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.insert(excretionRecords).values(data);
+}
+
+// Health records queries
+export async function getHealthRecordsByCat(catId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(healthRecords).where(eq(healthRecords.catId, catId));
+}
+
+export async function addHealthRecord(data: InsertHealthRecord) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.insert(healthRecords).values(data);
+}
